@@ -9,7 +9,7 @@
   "author": "Danny Grasse",
   "license": "ISC",
   "dependencies": {
-    "react": "^16"
+    "react": "^16.0.0"
   },
   "devDependencies": {}
 }
