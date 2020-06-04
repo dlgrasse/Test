@@ -1,0 +1,15 @@
+{
+  "name": "TEST",
+  "version": "1.0.0",
+  "description": "Test repository for getting git hooks like I want them",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo You Just Ran 'test'"
+  },
+  "author": "Danny Grasse",
+  "license": "ISC",
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}
