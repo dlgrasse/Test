@@ -1,0 +1,5 @@
+#!/c/Program\ Files/Git/usr/bin/sh.exe
+
+npm update
+
+echo "git post-merge hook executed `date '+%d/%m/%Y %H:%M:%S'`" >> ~/gitHook.txt
