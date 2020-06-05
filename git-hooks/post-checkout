@@ -1,5 +1,6 @@
 #!/c/Program\ Files/Git/usr/bin/sh.exe
 
 npm update
+mvn install dependency:copy-dependencies
 
 echo "git post-checkout hook executed `date '+%d/%m/%Y %H:%M:%S'`" >> ~/gitHook.txt
