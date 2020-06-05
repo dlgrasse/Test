@@ -6,7 +6,7 @@ runOnChange() {
 	echo "$changedFiles" | grep -q "$1" && eval "$2"
 }
 
-runOnChange package-lock.json "npm install --dev"
+runOnChange package-lock.json "npm install"
 runOnChange pom.xml "mvn install dependency:copy-dependencies"
 
 echo "git post-checkout hook executed `date '+%d/%m/%Y %H:%M:%S'`" >> ~/gitHook.txt
