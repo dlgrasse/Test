@@ -7,6 +7,6 @@ runOnChange() {
 }
 
 runOnChange package-lock.json "npm install"
-runOnChange pom.xml "mvn install dependency:copy-dependencies"
+runOnChange pom.xml "rm -fr target/dependency/*; mvn install dependency:copy-dependencies;"
 
 echo "git post-checkout hook executed `date '+%d/%m/%Y %H:%M:%S'`" >> ~/gitHook.txt
