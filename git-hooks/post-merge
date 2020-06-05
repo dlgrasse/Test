@@ -1,6 +1,12 @@
 #!/c/Program\ Files/Git/usr/bin/sh.exe
 
-npm update
-mvn install dependency:copy-dependencies
+changedFiles="$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD)"
+
+runOnChange() {
+	echo "$changedFiles" | grep -q "$1" && eval "$2"
+}
+
+runOnChange package-lock.json "npm install --dev"
+runOnChange pom.xml "mvn install dependency:copy-dependencies"
 
 echo "git post-merge hook executed `date '+%d/%m/%Y %H:%M:%S'`" >> ~/gitHook.txt
