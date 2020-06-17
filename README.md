@@ -1,6 +1,3 @@
 # Test
-First repository to learn all things git
+The first thing you should do is run init.sh from the git-hooks folder
 
-Just editing a file to commit, originally, to the readme-edit branch
-
-Now editing so I can test git-hooks behavior
