@@ -1,3 +1,4 @@
 # don't commit all that npm crap...too many files. just run 'npm update' with a hook
 node_modules/
+target/
 
