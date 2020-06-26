@@ -11,3 +11,6 @@ services:
     build: ./db
     ports:
       - "5432:5432"
+    restart: "always"
+    environment:
+      - POSTGRES_PASSWORD="Orion123"
