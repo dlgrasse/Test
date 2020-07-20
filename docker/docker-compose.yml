@@ -2,15 +2,15 @@ version: '3'
 services:
   web:
     container_name: "web"
+    env_file: .env
     build: ./web
     ports:
       - "80:8080"
   
   db:
     container_name: "db"
+    env_file: .env
     build: ./db
     ports:
       - "5432:5432"
     restart: "always"
-    environment:
-      - POSTGRES_PASSWORD="Orion123"
