@@ -1,0 +1,16 @@
+{
+  "extends": "@sas/nova-scripts/config/tsconfig-base.json",
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": [
+    "src/setupTests.ts",
+    "**/__tests__/",
+    "**/__mocks__/",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ],
+  "compilerOptions": {
+    "rootDir": "src"
+  }
+}

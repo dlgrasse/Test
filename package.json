@@ -1,15 +1,49 @@
 {
   "name": "TEST",
-  "version": "1.0.0",
-  "description": "Test repository for getting git hooks like I want them",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo You Just Ran 'test'"
-  },
+  "version": "0.1.0",
+  "description": "Test repository for learning all things git, react, nova, docker, etc",
   "author": "Danny Grasse",
-  "license": "ISC",
   "dependencies": {
-    "react": "^16.13.1"
+    "@sas/nova-commons": "0.0.146",
+    "@sas/nova-commons-assets": "0.0.146",
+    "@sas/nova-scripts": "0.0.146",
+    "@types/react": "^16.9.43",
+    "@types/react-dom": "^16.8.5",
+    "husky": "^3.1.0",
+    "lint-staged": "10.0.0-beta.4",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/jest": "^24.9.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "eslint --fix"
+    ],
+    "*.{js,jsx,ts,tsx,css,json,md,scss}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "scripts": {
+    "start": "nova-scripts start",
+    "lint": "eslint --ext=js,jsx,ts,tsx src",
+    "check:format": "prettier --check \"**/*.{ts,tsx,json,js,jsx,md,scss}\"",
+    "format": "prettier --write --check \"**/*.{ts,tsx,json,js,jsx,md,scss}\"",
+    "build": "nova-scripts build",
+    "test": "nova-scripts test",
+    "verify": "yarn lint && yarn check:format && yarn test --watchAll=false && yarn build"
+  },
+  "browserslist": [
+    "edge >= 18",
+    "chrome >= 77",
+    "firefox >= 68",
+    "safari >= 13"
+  ]
 }

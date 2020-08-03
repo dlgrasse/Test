@@ -1,1 +1,1 @@
-FROM tomcat:latest-jdk8
+FROM tomcat:9.0.27-jdk8

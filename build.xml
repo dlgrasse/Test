@@ -1,0 +1,186 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+
+<!--
+    Typical usage of this is to run the default target to build the web apps from svn.
+    The repository is checked out into 'build',
+        then compiled and otherwise manipulated (expanded properties, etc) into 'staging'
+        then bundled for deployment in 'dist'.
+    These 3 stages are simply for convenience for inspecting the files in their different evolutions.
+    
+    Since this script builds from SVN (for deployment purposes),
+        any local builds for sandbox deployments should be done from within the IDE of your choice.
+    Maybe a local version of the build should be incorporated?
+        (thereby allowing this script to be used for either purpose)
+ -->
+<project name='TEST' default='war' basedir='.'>
+    <!-- INIT -->
+        <property file='local.properties'/>
+        
+        <property name='jar.name' value='${ant.project.name}.jar'/>
+        <property name='war.name' value='${ant.project.name}.war'/>
+        
+        <property name='javac.target' value='1.8'/>
+        <property name='javac.source' value='1.8'/>
+        
+        <property name='conf.dir' value='${basedir}/conf'/>
+        <property name='src.dir' value='${basedir}/src'/>
+        <property name='jar.dir' value='${basedir}/lib'/>
+        <property name='web.dir' value='${basedir}/WebContent'/>
+        <property name='webinf.dir' value='${web.dir}/WEB-INF'/>
+        
+        <property name='maven.jar.dir' value='${basedir}/target/dependency'
+        
+        <!-- where to do the svn checkout to -->
+        <property name='checkout.dir' value='build'/>
+        <property name='checkout.conf.dir' value='${checkout.dir}/conf'/>
+        <property name='checkout.src.dir' value='${checkout.dir}/src'/>
+        <property name='checkout.jar.dir' value='${checkout.dir}/lib'/>
+        <property name='checkout.java.dir' value='${checkout.src.dir}/Java'/>
+        <property name='checkout.js.dir' value='${checkout.src.dir}/JS'/>
+        <property name='checkout.css.dir' value='${checkout.src.dir}/CSS'/>
+        <property name='checkout.web.dir' value='${checkout.dir}/WebContent'/>
+        <property name='checkout.webinf.dir' value='${checkout.web.dir}/WEB-INF'/>
+        <property name='checkout.lib.dir' value='${checkout.webinf.dir}/lib'/>
+        
+        <!-- where to place intermediate files before war'ing them -->
+        <property name='staging.dir' value='${checkout.dir}/staging'/>
+        <property name='staging.web.dir' value='${staging.dir}/WebContent'/>
+        <property name='staging.webinf.dir' value='${staging.web.dir}/WEB-INF'/>
+        <property name='staging.class.dir' value='${staging.dir}/classes'/>
+        
+        <property name='dist.dir' value='dist'/>
+
+        <property name='exploded.dir' value='${dist.dir}/exploded'/>
+        
+        <property name='exploded.war.dir' value='${exploded.dir}/${war.name}'/>
+        
+        <condition property='localBuild'>
+            <equals arg1='${svn.location}' arg2='local'/>
+        </condition>
+        
+        <tstamp>
+            <format property='build.year' pattern='yyyy' locale='en'/>           
+            <format property='build.date.formatted' pattern='MM/dd/yyyy' />
+            <format property='build.date.raw' pattern='yyyyMMdd' />
+            <format property='build.time.formatted' pattern='HH:mm:ss' />
+            <format property='build.time.raw' pattern='HHmmss' />
+        </tstamp>
+        <property name='SpecificationVendor' value='SAS Institute Inc.'/>
+        <property name='SpecificationVersion' value='${ant.project.name}'/>
+        <property name='ImplementationVendor' value='SAS Institute Inc.'/>
+        <property name='ImplementationVendorId' value='com.sas'/>
+        <property name='Copyright' value='Copyright (c) ${build.year}, SAS Institute Inc., Cary, NC, USA'/>
+    </target>
+    
+    <!-- CLEAN -->
+    <target name='clean' depends='init' description='Cleans the build folders'>
+        <delete includeemptydirs='true' failonerror='false' dir='${basedir}/bin'/>
+        <delete includeemptydirs='true' failonerror='false' dir='${dist.dir}'/>
+        <delete includeemptydirs='true' failonerror='false' dir='${checkout.dir}'/>
+    </target>
+    
+    <!-- BUILD_LOCAL -->
+    <target name='buildLocal' depends='clean' if='${localBuild}'>
+        <mkdir dir='${checkout.dir}'/>
+        
+        <copy todir='${checkout.dir}'>
+            <fileset dir='${basedir}'>
+                <exclude name='build'/>
+            </fileset>
+        </copy>
+        
+        <mkdir dir='${staging.class.dir}'/>
+    </target>
+    
+    <!-- COMPILE -->
+    <target name='compile' depends='buildLocal' description='Compile Classes'>
+        <javac srcdir='${checkout.java.dir}' destdir='${staging.class.dir}'
+               source='${javac.source}' target='${javac.target}'
+               debug='on' deprecation='on'>
+ 
+            <classpath>
+                <fileset dir='${checkout.lib.dir}'>
+                    <include name='**/*.jar'/>
+                </fileset>
+                <fileset dir='${checkout.jar.dir}'>
+                    <include name='**/*.jar'/>
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
+    
+     <!-- JAR -->
+    <target name='jar' depends='compile'>
+        <mkdir dir='${dist.dir}'/>
+        
+        <jar jarfile='${dist.dir}/${jar.name}'>
+            <manifest>
+                <attribute name='Specification-Vendor' value='${SpecificationVendor}'/>
+                <attribute name='Specification-Version' value='${SpecificationVersion}'/>
+                <attribute name='Implementation-Vendor' value='${ImplementationVendor}'/>
+                <attribute name='Implementation-Vendor-Id' value='${ImplementationVendorId}'/>
+                <attribute name='Implementation-Version' value='${ImplementationVersion}'/>
+                <attribute name='Copyright' value='${Copyright}' />
+            </manifest>
+            
+            <metainf dir='${checkout.conf.dir}'>
+                <include name='rest-servlet.xml'/>
+            </metainf>
+            <fileset dir='${staging.class.dir}'>
+               <include name='**/*'/>
+            </fileset>
+        </jar>
+        
+        <!-- do this after so the buildinfo.xml file isn't in the jar file -->
+        <copy todir='${staging.class.dir}'>
+            <fileset dir='${checkout.conf.dir}'>
+                <include name='buildinfo.xml'/>
+            </fileset>
+            <filterchain>
+                <expandproperties/>
+            </filterchain>
+        </copy>
+    </target>
+    
+    <!-- WAR -->
+    <target name='war' depends='jar,html5,minify' description='Builds the WAR file for Tomcat.'>
+        <echo>Builds the WAR file for tomcat. Include all Jar file from lib directory.</echo>
+        
+        <war destfile='${dist.dir}/${war.name}' webxml='${checkout.web.dir}/WEB-INF/web.xml' update='false' duplicate='preserve'>
+            <manifest>
+                <attribute name='Specification-Vendor' value='${SpecificationVendor}'/>
+                <attribute name='Specification-Version' value='${SpecificationVersion}'/>
+                <attribute name='Implementation-Vendor' value='${ImplementationVendor}'/>
+                <attribute name='Implementation-Vendor-Id' value='${ImplementationVendorId}'/>
+                <attribute name='Implementation-Version' value='${ImplementationVersion}'/>
+                <attribute name='Copyright' value='${Copyright}' />
+            </manifest>
+            
+            <fileset dir='${checkout.web.dir}'>
+                <exclude name='index.jsp'/>
+                <exclude name='resources.zip'/>
+                <exclude name='**/README.txt'/>
+            </fileset>
+            <fileset dir='${staging.web.dir}'>
+                <include name='**/*'/>
+            </fileset>
+            <fileset dir='${maven.jar.dir}'>
+                <include name='**/*'/>
+            </fileset>
+            
+            <lib dir='${dist.dir}'>
+                <include name='${jar.name}'/>
+            </lib>
+            
+            <classes dir='${checkout.conf.dir}'>
+                <include name='NCSEAT.properties'/>
+                <include name='ncseat.hbm.xml'/>
+                <include name='hibernate.cfg.xml'/>
+                <include name='main.properties'/>
+            </classes>
+            <classes dir='${staging.class.dir}'>
+                <include name='buildinfo.xml'/>
+            </classes>
+        </war>
+    </target>
+</project>
