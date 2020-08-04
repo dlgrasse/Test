@@ -6,6 +6,7 @@ declare global {
     interface Link { uri:string; href:string; rel:string; method:string; };
 }
 export default () => {
+    // ESLINT: i overrode the eslint 
     console.debug ('calling REST enpoint to get stuffs');
     window._REGISTRY = {};
     fetch('./rest')
@@ -24,6 +25,7 @@ export default () => {
                     //  so i avoid it with 'any'
                     [link.method.toLowerCase()]: (data:any) => {
                         let href = link.href;
+                // ESLINT: won't allow 'var'; 'let' is not applicable since it doesn't change; 'const' is forced
                         for (const p in data) {
                             href = href.replace(`{${p}}`, data[p]);
                         }
