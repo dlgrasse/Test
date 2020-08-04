@@ -1,12 +1,8 @@
-import { createElement, useState, useEffect, FC } from "react"
+import { createElement, useState, FC } from "react"
 
 const App : FC = () => {
     // TYPESCRIPT: use this generic form so the call to #setListData's arguments below will be correctly typed
     const [ listData, setListData ] = useState<any[]>([]);
-
-    useEffect(() => {
-        
-    }, [listData]);
 
     function onButtonClick () {
         const respData = ['Hello', 'There'];
