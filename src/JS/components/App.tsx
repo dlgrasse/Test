@@ -1,3 +1,4 @@
+// TYPESCRIPT: i couldn't figure out how to create a standard functional component, even with minimal content, so TypeScript it is
 import { createElement, useState, FC } from "react"
 
 const App : FC = () => {
